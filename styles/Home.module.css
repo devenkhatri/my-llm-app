@@ -92,6 +92,12 @@ a.secondary {
   min-width: 180px;
 }
 
+.main textarea {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
 .footer {
   grid-row-start: 3;
   display: flex;

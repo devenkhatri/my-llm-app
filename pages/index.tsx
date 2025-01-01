@@ -21,6 +21,7 @@ export default function Home() {
   const [timelapse, setTimelapse] = useState(0);
 
   const generateScript = async () => {
+    // if(!prompt) alert("Prompt is empty");
     setTimelapse(Date.now())
     setLoading(true);
     const response = await fetch('/api/generate', {
@@ -48,7 +49,7 @@ export default function Home() {
         className={`${styles.page} ${geistSans.variable} ${geistMono.variable}`}
       >
         <main className={styles.main}>
-        <h1 style={{marginBottom: '0.5rem'}}>LLM AI Script Generator</h1>
+          <h1 style={{ marginBottom: '0.5rem' }}>LLM AI Script Generator</h1>
           <ol>
             <li>
               Get started by entering the <code>prompt</code>.
@@ -56,8 +57,8 @@ export default function Home() {
             <li>See your generated response in <code>output box</code>.</li>
           </ol>
 
-          <div>            
-            <h2 style={{marginBottom: '0.5rem'}}>Input your Prompt here:</h2>
+          <div>
+            <h2 style={{ marginBottom: '0.5rem' }}>Input your Prompt here:</h2>
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
@@ -67,26 +68,34 @@ export default function Home() {
             />
             <div className={styles.ctas}>
               <a onClick={generateScript} className={styles.primary} style={{ padding: '0.5rem 1rem' }}>
-                <Image
-                  className={styles.logo}
-                  src="/vercel.svg"
-                  alt="Vercel logomark"
-                  width={20}
-                  height={20}
-                />
+                {loading ?
+                  <Image
+                    className={styles.logo}
+                    src="/loading.gif"
+                    alt="Please wait..."
+                    width={20}
+                    height={20}
+                  /> :
+                  <Image
+                    className={styles.logo}
+                    src="/vercel.svg"
+                    alt="Vercel logomark"
+                    width={20}
+                    height={20}
+                  />
+                }
                 Hit LLM
               </a>
             </div>
-            {loading && <div>Please wait....{Date.now() - timelapse}</div>}
-              <div style={{ marginTop: '2rem' }}>
-                <h2 style={{marginBottom: '0.5rem'}}>Generated Output:</h2>
-                <textarea
-                  value={script}
-                  readOnly
-                  rows={5}
-                  style={{ width: '100%', marginBottom: '1rem', padding: '1rem' }}
-                />
-              </div>
+            <div style={{ marginTop: '2rem' }}>
+              <h2 style={{ marginBottom: '0.5rem' }}>Generated Output:</h2>
+              <textarea
+                value={script}
+                readOnly
+                rows={5}
+                style={{ width: '100%', marginBottom: '1rem', padding: '1rem' }}
+              />
+            </div>
           </div>
         </main>
       </div>
