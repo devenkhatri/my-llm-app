@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
+import ModelDropdown from "@/components/ModelDropdown";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,22 +16,34 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+type Model = {
+  id: string;
+  description: string;
+  architecture: {
+    modality: string;
+  };
+};
+
 export default function Home() {
   const [prompt, setPrompt] = useState('');
   const [script, setScript] = useState('');
   const [loading, setLoading] = useState(false);
-  const [timelapse, setTimelapse] = useState(0);
+  const [selectedModel, setSelectedModel] = useState<Model | null>(null);
+
+  const handleModelSelect = (model: Model | null) => {
+    setSelectedModel(model);
+    console.log("Selected Model:", model);
+  };
 
   const generateScript = async () => {
     // if(!prompt) alert("Prompt is empty");
-    setTimelapse(Date.now())
     setLoading(true);
     const response = await fetch('/api/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ prompt }),
+      body: JSON.stringify({ prompt,model: selectedModel?.id }),
     });
 
     const data = await response.json();
@@ -59,6 +72,21 @@ export default function Home() {
           </ol>
 
           <div>
+            <ModelDropdown onModelSelect={handleModelSelect} />
+            {selectedModel && (
+              <div style={{ marginBottom: "1rem",marginTop: "0.5rem" }}>
+                <h3>Selected Model</h3>
+                <p>
+                  <strong>Name:</strong> {selectedModel.id}
+                </p>
+                <p>
+                  <strong>Description:</strong> {selectedModel.description}
+                </p>
+                <p>
+                  <strong>Modality:</strong> {selectedModel.architecture.modality}
+                </p>
+              </div>
+            )}
             <h2 style={{ marginBottom: '0.5rem' }}>Input your Prompt here:</h2>
             <TextareaAutosize
               value={prompt}

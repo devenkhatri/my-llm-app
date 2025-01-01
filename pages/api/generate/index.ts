@@ -10,11 +10,12 @@ const openai = new OpenAI({
 export const runtime = "edge";
 
 export default async function POST(req: Request): Promise<Response> {
-  const { prompt } = await req.json();
+  const { prompt, model } = await req.json();
 
   const response = await openai.chat.completions.create({
     // model: "nousresearch/hermes-3-llama-3.1-405b",
-    model: "mistralai/mixtral-8x7b-instruct",
+    // model: model || "mistralai/mixtral-8x7b-instruct",
+    model: model,
     messages: [
       {
         role: "system",
