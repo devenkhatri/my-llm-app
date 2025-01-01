@@ -33,7 +33,7 @@ export default async function POST(req: Request): Promise<Response> {
     n: 1,
   });
 
-  const script = response.choices[0]?.message?.content!.trim() || 'No script generated';
+  const script = response.choices[0]?.message?.content!.trim() || 'No output generated';
 
   return new Response(JSON.stringify({ script }), {
     headers: { 'Content-Type': 'application/json' },

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { useState } from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,7 +50,7 @@ export default function Home() {
         className={`${styles.page} ${geistSans.variable} ${geistMono.variable}`}
       >
         <main className={styles.main}>
-          <h1 style={{ marginBottom: '0.5rem' }}>LLM AI Script Generator</h1>
+          <h1 style={{ marginBottom: '0.5rem' }}>LLM AI Generator</h1>
           <ol>
             <li>
               Get started by entering the <code>prompt</code>.
@@ -59,11 +60,12 @@ export default function Home() {
 
           <div>
             <h2 style={{ marginBottom: '0.5rem' }}>Input your Prompt here:</h2>
-            <textarea
+            <TextareaAutosize
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Enter your prompt here..."
               rows={5}
+              minRows={5}
               style={{ width: '100%', marginBottom: '1rem', padding: '1rem' }}
             />
             <div className={styles.ctas}>
@@ -89,10 +91,11 @@ export default function Home() {
             </div>
             <div style={{ marginTop: '2rem' }}>
               <h2 style={{ marginBottom: '0.5rem' }}>Generated Output:</h2>
-              <textarea
+              <TextareaAutosize
                 value={script}
                 readOnly
                 rows={5}
+                minRows={5}
                 style={{ width: '100%', marginBottom: '1rem', padding: '1rem' }}
               />
             </div>
