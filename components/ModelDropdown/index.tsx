@@ -21,22 +21,20 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({ onModelSelect }) => {
   // Fetch models from the API
   useEffect(() => {
     const fetchModels = async () => {
-      const token = process.env.NEXT_PUBLIC_OPENROUTER_API_TOKEN;
       try {
-        const response = await fetch(
-          "https://openrouter.ai/api/v1/models",
-          {
-            headers: {
-              Authorization: `Bearer ${token}` // Add authorization header from environment variable
-            }
-          }
-        );
+        const response = await fetch('/api/getmodels', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        // console.log("****** response ",response)
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
         const output = await response.json();
-        setModels(output.data); // Set fetched models to state
-        console.log("****** All Models",output)
+        setModels(output.models.data); // Set fetched models to state
+        console.log("****** All Models",output.models)
       } catch (error: any) {
         setError(error.message); // Handle errors
       }
@@ -57,10 +55,10 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({ onModelSelect }) => {
     <div>
       <h1>Model Selector</h1>
       {error && <p style={{ color: "red" }}>{error}</p>} {/* Display errors */}
-      {models.length > 0 ? (
+      {models && models.length > 0 ? (
         <>
           <label htmlFor="model-dropdown">Choose a model: </label>
-          <select id="model-dropdown" onChange={handleChange} defaultValue="">
+          <select id="model-dropdown" onChange={handleChange} defaultValue="" style={{width:'90%'}}>
             <option value="" disabled>
               Select a model
             </option>

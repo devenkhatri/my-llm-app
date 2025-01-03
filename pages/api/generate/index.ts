@@ -12,15 +12,17 @@ export const runtime = "edge";
 export default async function POST(req: Request): Promise<Response> {
   const { prompt, model } = await req.json();
 
-  const response = await openai.chat.completions.create({
+  const response: any = await openai.chat.completions.create({
     // model: "nousresearch/hermes-3-llama-3.1-405b",
-    // model: model || "mistralai/mixtral-8x7b-instruct",
-    model: model,
+    model: model || "mistralai/mixtral-8x7b-instruct",
+    // model: model || "meta-llama/llama-3.3-70b-instruct",
+    // model: model || "openai/gpt-4o-2024-11-20",
+    // model: model,
     messages: [
       {
         role: "system",
         // content: "You are an AI writing assistant that generates a script based on the provided prompt.",
-        content: "You are an AI assistant. Please answer based on the provided prompt.",
+        content: "You are an AI assistant. Please provide response based on the provided prompt.",
       },
       {
         role: "user",
@@ -34,7 +36,18 @@ export default async function POST(req: Request): Promise<Response> {
     n: 1,
   });
 
-  const script = response.choices[0]?.message?.content!.trim() || 'No output generated';
+  var script = 'No output generated';
+  console.log("response", response)
+
+  if(response.error) {
+    script = response.error.message;
+  } else {
+    try {
+      script = response.choices[0]?.message?.content!.trim();
+    } catch (error: any) {
+      script = error.message;
+    }
+  }
 
   return new Response(JSON.stringify({ script }), {
     headers: { 'Content-Type': 'application/json' },
