@@ -1,5 +1,7 @@
 # My LLM
 
+Starting point referenced from this [`Article`](./public/Article.pdf)
+
 To run this application create ```key``` from ```https://openrouter.ai/``` and add it to ```NEXT_PUBLIC_OPENROUTER_API_TOKEN``` environment variable
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
