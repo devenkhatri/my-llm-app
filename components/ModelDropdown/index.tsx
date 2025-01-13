@@ -1,3 +1,4 @@
+import { Select, SelectItem } from "@nextui-org/react";
 import React, { useState, useEffect } from "react";
 
 type Model = {
@@ -17,11 +18,13 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({ onModelSelect }) => {
   const [models, setModels] = useState<Model[]>([]); // Stores models fetched from the API
   const [selectedModel, setSelectedModel] = useState<Model | null>(null); // Stores the currently selected model
   const [error, setError] = useState<string | null>(null); // Stores any error messages
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Fetch models from the API
   useEffect(() => {
     const fetchModels = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch('/api/getmodels', {
           method: 'POST',
           headers: {
@@ -34,9 +37,11 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({ onModelSelect }) => {
         }
         const output = await response.json();
         setModels(output.models.data); // Set fetched models to state
-        console.log("****** All Models",output.models)
+        setIsLoading(false);
+        console.log("****** All Models", output.models)
       } catch (error: any) {
         setError(error.message); // Handle errors
+        setIsLoading(false);
       }
     };
 
@@ -53,43 +58,21 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({ onModelSelect }) => {
 
   return (
     <div>
-      <h1>Model Selector</h1>
+      <div className="text-primary text-lg">Model Selector</div>
       {error && <p style={{ color: "red" }}>{error}</p>} {/* Display errors */}
-      {models && models.length > 0 ? (
-        <>
-          <label htmlFor="model-dropdown">Choose a model: </label>
-          <select id="model-dropdown" onChange={handleChange} defaultValue="" style={{width:'90%'}}>
-            <option value="" disabled>
-              Select a model
-            </option>
-            {models.map((model) => (
-              <option key={model.id} value={model.id}>
-                {model.name}
-              </option>
-            ))}
-          </select>
 
-          {/* {selectedModel && (
-            <div style={{ marginTop: "20px" }}>
-              <h2>Model Details</h2>
-              <p>
-                <strong>ID:</strong> {selectedModel.id}
-              </p>
-              <p>
-                <strong>Name:</strong> {selectedModel.name}
-              </p>
-              <p>
-                <strong>Description:</strong> {selectedModel.description}
-              </p>
-              <p>
-              <strong>Modality:</strong> {selectedModel.architecture.modality}
-              </p>
-            </div>
-          )} */}
-        </>
-      ) : (
-        <p>Loading models...</p>
-      )}
+      <Select
+        className="w-full"
+        isRequired
+        color="primary"
+        variant="bordered"
+        items={models}
+        label="Choose the LLM Model"
+        isLoading={isLoading}     
+        onChange={handleChange}           
+      >
+        {(model) => <SelectItem key={model.id}>{model.name}</SelectItem>}
+      </Select>
     </div>
   );
 };
