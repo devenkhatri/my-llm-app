@@ -5,6 +5,8 @@ import styles from "@/styles/Home.module.css";
 import { useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import ModelDropdown from "@/components/ModelDropdown";
+import { Textarea } from "@nextui-org/input";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Code } from "@nextui-org/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,9 +28,22 @@ type Model = {
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
+  const [isPromptValid, setIsPromptValid] = useState(true);
   const [script, setScript] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<Model | null>(null);
+
+  const BrandIcon = () => {
+    return (
+      <Image
+        className={styles.logo}
+        src="/vercel.svg"
+        alt="Vercel logomark"
+        width={20}
+        height={20}
+      />
+    );
+  }
 
   const handleModelSelect = (model: Model | null) => {
     setSelectedModel(model);
@@ -36,14 +51,15 @@ export default function Home() {
   };
 
   const generateScript = async () => {
-    // if(!prompt) alert("Prompt is empty");
+    setIsPromptValid(true);
+    if (!prompt || prompt.length <= 0) { setIsPromptValid(false); return; }
     setLoading(true);
     const response = await fetch('/api/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ prompt,model: selectedModel?.id }),
+      body: JSON.stringify({ prompt, model: selectedModel?.id }),
     });
 
     const data = await response.json();
@@ -63,7 +79,7 @@ export default function Home() {
         className={`${styles.page} ${geistSans.variable} ${geistMono.variable}`}
       >
         <main className={styles.main}>
-          <h1 style={{ marginBottom: '0.5rem' }}>LLM AI Generator</h1>
+          <h1>LLM AI Generator</h1>
           <ol>
             <li>
               Get started by entering the <code>prompt</code>.
@@ -71,62 +87,79 @@ export default function Home() {
             <li>See your generated response in <code>output box</code>.</li>
           </ol>
 
-          <div>
-            <ModelDropdown onModelSelect={handleModelSelect} />
-            {selectedModel && (
-              <div style={{ marginBottom: "1rem",marginTop: "0.5rem" }}>
-                <h3>Selected Model</h3>
-                <p>
-                  <strong>Name:</strong> {selectedModel.id}
-                </p>
-                <p>
-                  <strong>Description:</strong> {selectedModel.description}
-                </p>
-                <p>
-                  <strong>Modality:</strong> {selectedModel.architecture.modality}
-                </p>
-              </div>
-            )}
-            <h2 style={{ marginBottom: '0.5rem' }}>Input your Prompt here:</h2>
-            <TextareaAutosize
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Enter your prompt here..."
-              rows={5}
-              minRows={5}
-              style={{ width: '100%', marginBottom: '1rem', padding: '1rem' }}
-            />
-            <div className={styles.ctas}>
-              <a onClick={generateScript} className={styles.primary} style={{ padding: '0.5rem 1rem' }}>
-                {loading ?
-                  <Image
-                    className={styles.logo}
-                    src="/loading.gif"
-                    alt="Please wait..."
-                    width={20}
-                    height={20}
-                  /> :
-                  <Image
-                    className={styles.logo}
-                    src="/vercel.svg"
-                    alt="Vercel logomark"
-                    width={20}
-                    height={20}
-                  />
-                }
+          <div className="w-full grid gap-2">
+            <Card>
+              <CardBody>
+                <ModelDropdown onModelSelect={handleModelSelect} />
+                {selectedModel && (
+                  <Card>
+                    <CardHeader><Chip color="primary" variant="dot">Selected Model</Chip></CardHeader>
+                    <CardBody>
+                      <Code>
+                        <p>
+                          <strong>Name:</strong> {selectedModel.id}
+                        </p>
+                        <p>
+                          <strong>Description:</strong> {selectedModel.description}
+                        </p>
+                        <p>
+                          <strong>Modality:</strong> {selectedModel.architecture.modality}
+                        </p>
+                      </Code>
+                    </CardBody>
+                  </Card>
+                )}
+              </CardBody>
+            </Card>
+            <Card>
+              <CardBody>
+                <Textarea
+                  isRequired
+                  isInvalid={!isPromptValid}
+                  color="primary"
+                  errorMessage="The prompt cannot be empty"
+                  className="w-full"
+                  minRows={5}
+                  label="Input Prompt"
+                  labelPlacement="inside"
+                  placeholder="Enter your prompt here..."
+                  value={prompt}
+                  onValueChange={(e) => setPrompt(e)}
+                  variant={'bordered'}
+                  isClearable
+                  onClear={() => console.log("textarea cleared")}
+                />
+              </CardBody>
+            </Card>
+            <div>
+              <Button
+                isLoading={loading}
+                variant="solid"
+                color="primary"
+                startContent={<BrandIcon />}
+                radius="full"
+                onPress={generateScript}
+              >
                 Hit LLM
-              </a>
+              </Button>
             </div>
-            <div style={{ marginTop: '2rem' }}>
-              <h2 style={{ marginBottom: '0.5rem' }}>Generated Output:</h2>
-              <TextareaAutosize
-                value={script}
-                readOnly
-                rows={5}
-                minRows={5}
-                style={{ width: '100%', marginBottom: '1rem', padding: '1rem' }}
-              />
-            </div>
+            <Card>
+              <CardBody>
+                <div className="text-success text-lg">Generated Output:</div>
+                <Textarea
+                  isReadOnly
+                  className="w-full"
+                  color="success"
+                  minRows={5}
+                  label="Response"
+                  labelPlacement="inside"
+                  placeholder="Response will come here..."
+                  value={script}
+                  onValueChange={(e) => setPrompt(e)}
+                  variant={'bordered'}
+                />
+              </CardBody>
+            </Card>
           </div>
         </main>
       </div>
