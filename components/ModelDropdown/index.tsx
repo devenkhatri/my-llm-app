@@ -1,4 +1,4 @@
-import { Select, SelectItem } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Select, SelectItem } from "@nextui-org/react";
 import React, { useState, useEffect } from "react";
 
 type Model = {
@@ -49,8 +49,8 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({ onModelSelect }) => {
   }, []);
 
   // Handle dropdown change
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const modelId = event.target.value;
+  const handleChange = (modelId: any) => {
+    // const modelId = event.target.value;
     const model = models.find((m) => m.id === modelId) || null;
     setSelectedModel(model); // Update selected model
     onModelSelect(model); // Notify parent component of selection
@@ -60,19 +60,19 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({ onModelSelect }) => {
     <div>
       <div className="text-primary text-lg">Model Selector</div>
       {error && <p style={{ color: "red" }}>{error}</p>} {/* Display errors */}
-
-      <Select
+     
+      <Autocomplete
         className="w-full"
         isRequired
         color="primary"
         variant="bordered"
-        items={models}
+        defaultItems={models}
         label="Choose the LLM Model"
         isLoading={isLoading}     
-        onChange={handleChange}           
+        onSelectionChange={handleChange}
       >
-        {(model) => <SelectItem key={model.id}>{model.name}</SelectItem>}
-      </Select>
+        {(model) => <AutocompleteItem key={model.id}>{model.name}</AutocompleteItem>}
+      </Autocomplete>
     </div>
   );
 };
