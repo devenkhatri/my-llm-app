@@ -3,10 +3,14 @@ import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { useState } from 'react';
-import TextareaAutosize from 'react-textarea-autosize';
+import remarkGfm from 'remark-gfm';
 import ModelDropdown from "@/components/ModelDropdown";
 import { Textarea } from "@nextui-org/input";
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Code } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Chip, Code, Skeleton, Snippet } from "@nextui-org/react";
+import Markdown from "react-markdown";
+import { CopyToClipboardButton } from "react-clipboard-button";
+import rehypeHighlight from "rehype-highlight";
+import rehypeRaw from "rehype-raw";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -95,7 +99,7 @@ export default function Home() {
                   <Card>
                     <CardHeader><Chip color="primary" variant="dot">Selected Model</Chip></CardHeader>
                     <CardBody>
-                      <Code>
+                      <Snippet symbol={""} className="snippet-wrap">
                         <p>
                           <strong>Name:</strong> {selectedModel.id}
                         </p>
@@ -105,7 +109,7 @@ export default function Home() {
                         <p>
                           <strong>Modality:</strong> {selectedModel.architecture.modality}
                         </p>
-                      </Code>
+                      </Snippet>
                     </CardBody>
                   </Card>
                 )}
@@ -145,19 +149,26 @@ export default function Home() {
             </div>
             <Card>
               <CardBody>
-                <div className="text-success text-lg">Generated Output:</div>
-                <Textarea
-                  isReadOnly
-                  className="w-full"
-                  color="success"
-                  minRows={5}
-                  label="Response"
-                  labelPlacement="inside"
-                  placeholder="Response will come here..."
-                  value={script}
-                  onValueChange={(e) => setPrompt(e)}
-                  variant={'bordered'}
-                />
+              <div className="text-success text-lg">Generated Output:</div>
+                {loading && 
+                  <div className="w-full flex flex-col gap-2">
+                    <Skeleton className="h-3 w-2/5 rounded-lg" />
+                    <Skeleton className="h-3 w-3/5 rounded-lg" />
+                    <Skeleton className="h-3 w-3/5 rounded-lg" />
+                    <Skeleton className="h-3 w-4/5 rounded-lg" />
+                  </div>}                
+                {/* <CopyToClipboardButton
+                  text={String(script) }
+                  onSuccess={() => {console.log('success!'); }}
+                  onError={() => console.log('error!')}
+                >
+                  <Button>Copy To Clipboard !</Button>
+                </CopyToClipboardButton> */}
+                {/* <Textarea value={script}/> */}
+                <Markdown className={"markdown prose"} remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight, rehypeRaw]}>
+                  {script}
+                </Markdown>
+
               </CardBody>
             </Card>
           </div>
