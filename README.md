@@ -1,6 +1,7 @@
 # My LLM
 
-Starting point referenced from this [`Article`](./public/Article.pdf)
+1. Multi LLM Chat Starting point referenced from this [`Article`](./public/Article.pdf)
+2. DB Chat Starting point referenced from this [`Article`](./public/ArticleDBChat.pdf)
 
 To run this application create ```key``` from ```https://openrouter.ai/``` and add it to ```NEXT_PUBLIC_OPENROUTER_API_TOKEN``` environment variable
 

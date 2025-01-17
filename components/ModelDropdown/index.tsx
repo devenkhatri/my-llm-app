@@ -59,6 +59,7 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({ onModelSelect }) => {
   const handleChange = (modelId: any) => {
     // const modelId = event.target.value;
     const model = models.find((m) => m.id === modelId) || null;
+    console.log("Selected Model",model)
     setSelectedModel(model); // Update selected model
     onModelSelect(model); // Notify parent component of selection
   };

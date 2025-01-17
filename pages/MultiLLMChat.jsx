@@ -136,7 +136,7 @@ export default function MultiLLMChat() {
                         </div>
                         <Card>
                             <CardBody>
-                                <div className="text-success text-lg">Generated Output:</div>
+                                <div className="text-primary text-lg">Generated Output:</div>
                                 {loading &&
                                     <div className="w-full flex flex-col gap-2">
                                         <Skeleton className="h-3 w-2/5 rounded-lg" />
